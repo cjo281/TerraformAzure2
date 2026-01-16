@@ -1,33 +1,44 @@
 # Public IP for frontend VM
 resource "azurerm_public_ip" "frontend_ip" {
   name                = "${var.frontend_vm_name}-pip"
-  location            = azurerm_resource_group.staging.location
-  resource_group_name = azurerm_resource_group.staging.name
-  allocation_method   = "Dynamic"
+  location            = var.location
+  resource_group_name = var.rg_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
 }
 
 # Network Interface - Frontend
 resource "azurerm_network_interface" "frontend_nic" {
   name                = "${var.frontend_vm_name}-nic"
-  location            = azurerm_resource_group.staging.location
-  resource_group_name = azurerm_resource_group.staging.name
+  location            = var.location
+  resource_group_name = var.rg_name
+
 
   ip_configuration {
     name                          = "frontend-ipconfig"
-    subnet_id                     = azurerm_subnet.frontend.id
+    subnet_id                     = var.frontend_subnet
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.frontend_ip.id
   }
 }
 
 # Frontend VM
-resource "azurerm_windows_virtual_machine" "frontend_vm" {
+resource "azurerm_linux_virtual_machine" "frontend_vm" {
   name                = var.frontend_vm_name
-  location            = azurerm_resource_group.staging.location
-  resource_group_name = azurerm_resource_group.staging.name
+  location            = var.location
+  resource_group_name = var.rg_name
   size                = var.vm_size
   admin_username      = var.admin_username
-  admin_password      = var.admin_password
+  #admin_password      = var.admin_password
+
+  disable_password_authentication = true
+
+  admin_ssh_key {
+  username   = var.admin_username
+  public_key = var.admin_ssh_public_key
+}
+  
   network_interface_ids = [
     azurerm_network_interface.frontend_nic.id
   ]
@@ -38,37 +49,45 @@ resource "azurerm_windows_virtual_machine" "frontend_vm" {
   }
 
   source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "latest"
-  }
+  publisher = "Canonical"
+  offer     = "0001-com-ubuntu-server-focal"
+  sku       = "20_04-lts"
+  version   = "latest"
+}
+
 }
 
 # Network Interface - Backend
 resource "azurerm_network_interface" "backend_nic" {
   name                = "${var.backend_vm_name}-nic"
-  location            = azurerm_resource_group.staging.location
-  resource_group_name = azurerm_resource_group.staging.name
+  location            = var.location
+  resource_group_name = var.rg_name
 
   ip_configuration {
     name                          = "backend-ipconfig"
-    subnet_id                     = azurerm_subnet.backend.id
+    subnet_id                     = var.backend_subnet
     private_ip_address_allocation = "Dynamic"
   }
 }
 
 # Backend VM
-resource "azurerm_windows_virtual_machine" "backend_vm" {
+resource "azurerm_linux_virtual_machine" "backend_vm" {
   name                = var.backend_vm_name
-  location            = azurerm_resource_group.staging.location
-  resource_group_name = azurerm_resource_group.staging.name
+  location            = var.location
+  resource_group_name = var.rg_name
   size                = var.vm_size
   admin_username      = var.admin_username
-  admin_password      = var.admin_password
+  #admin_password      = var.admin_password
   network_interface_ids = [
     azurerm_network_interface.backend_nic.id
   ]
+
+  disable_password_authentication = true
+
+admin_ssh_key {
+  username   = var.admin_username
+  public_key = var.admin_ssh_public_key
+}
 
   os_disk {
     caching              = "ReadWrite"
@@ -76,9 +95,10 @@ resource "azurerm_windows_virtual_machine" "backend_vm" {
   }
 
   source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "latest"
-  }
+  publisher = "Canonical"
+  offer     = "0001-com-ubuntu-server-focal"
+  sku       = "20_04-lts"
+  version   = "latest"
+}
+
 }

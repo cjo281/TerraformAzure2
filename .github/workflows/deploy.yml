@@ -1,0 +1,70 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:         #manual trigger
+  
+    inputs:                  #this creates a dropdown menu in GitHub Actions UI:
+      environment:
+        description: "Choose environment to deploy"
+        required: true
+        type: choice
+        options:            #defines the allowed values for the input (This ensures the user cannot type random values like:)
+          - staging
+          - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment: ${{ github.event.inputs.environment }}        #this is GitHub Actions’ way of referencing the value you selected
+
+    defaults:
+     #Every run: command in this job should execute inside this folder
+     #So if you choose staging, then: terraform init, plan, and apply will be run. 
+      run:                                                     
+        working-directory: environments/${{ github.event.inputs.environment }}
+
+    env:
+      # Azure authentication
+      ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+      ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+      ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
+      ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+
+      # Terraform variables (secrets)
+      TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+      TF_VAR_admin_ssh_public_key: ${{ secrets.ADMIN_SSH_PUBLIC_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+      #If you choose staging: "terraform plan -var-file="staging.tfvars" thenc orrect file will be loaded
+      - name: Terraform Plan
+        run: terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars" -out=tfplan
+
+      - name: Show Plan Summary
+        run: terraform show -no-color tfplan
+
+      - name: Terraform Apply (Production)
+        if: github.event.inputs.environment == 'production'
+        run: terraform apply -auto-approve tfplan
+
+      - name: Terraform Apply (Staging)
+        if: github.event.inputs.environment == 'staging'
+        run: terraform apply -auto-approve tfplan
