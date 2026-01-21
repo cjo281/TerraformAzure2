@@ -1,8 +1,7 @@
 # Configure the Azure provider
 provider "azurerm" {
   features {}
-  
-
+  subscription_id = "0fc82742-1d59-4d67-b7ff-9c56f3c0f0df"
 }
 
 # Resource Group
@@ -42,6 +41,8 @@ module "monitoring" {
   rg_name  = azurerm_resource_group.staging.name
   location = var.location
   target_resource_id = azurerm_resource_group.staging.id
+  log_analytics_workspace_name = var.log_analytics_workspace_name
+
   
 
 

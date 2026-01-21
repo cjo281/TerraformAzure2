@@ -56,3 +56,6 @@ variable "backend_vm_name" {
   description = "Backend VM name"
   #default     = "backend-vm-staging"
 }
+variable "log_analytics_workspace_name" {
+  type = string
+}

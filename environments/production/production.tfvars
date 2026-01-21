@@ -1,11 +1,12 @@
 location = "westus"
 rg_name  = "RG-Production"
-vnet_address_space = "10.1.0.0/16"
-frontend_subnet_prefix = "10.1.1.0/24"
-backend_subnet_prefix = "10.1.2.0/24"
+vnet_address_space = ["10.1.0.0/16]"]
+frontend_subnet_prefix = ["10.1.1.0/24"]
+backend_subnet_prefix = ["10.1.2.0/24"]
 vm_size  = "Standard_B2s"
 admin_username = "azureuser"
 admin_password = "P@ssword1234!"
-admin_ssh_public_key = "ssh-rsa AAAA..."
+admin_ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAlrK+FK4Tt82jTsf7ho6LGACG2Obv95jpp4/RdtNItn terraform-vm-key"
 frontend_vm_name = "frontend-vm-production"
 backend_vm_name = "backend-vm-production"
+log_analytics_workspace_name = "lab-logs-production"

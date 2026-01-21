@@ -9,4 +9,4 @@ admin_password = "P@ssword1234!"
 admin_ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAlrK+FK4Tt82jTsf7ho6LGACG2Obv95jpp4/RdtNItn terraform-vm-key"
 frontend_vm_name = "frontend-vm-staging"
 backend_vm_name = "backend-vm-staging"
-
+log_analytics_workspace_name = "lab-logs-staging"

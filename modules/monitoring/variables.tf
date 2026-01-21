@@ -9,6 +9,10 @@ variable "location" {
   description = "Azure region for monitoring resources"
   type        = string
 }
+variable "log_analytics_workspace_name" {
+  description = "Name of the Log Analytics workspace"
+  type = string
+}
 
 variable "target_resource_id" {
   description = "ID of the resource to attach diagnostics to"
