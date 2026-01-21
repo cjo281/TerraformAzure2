@@ -9,7 +9,11 @@ This repository follows a multi‑environment Terraform architecture, separating
 Terraform Modules Used
 The infrastructure is broken into three core modules:
 1. Networking Module ()
+
+
 Creates all network‑related resources:
+
+
 • 	Virtual Network ()
 • 	Frontend subnet
 • 	Backend subnet
@@ -17,37 +21,67 @@ Creates all network‑related resources:
 • 	NSG → Subnet associations
 
 2. Compute Module ()
+
+
 Deploys compute resources:
+
+
 • 	Frontend Linux VM
+
 • 	Backend Linux VM
+
 • 	NICs for each VM
+
 • 	Public IP for the frontend VM
+
 • 	Admin credentials (password + SSH key)
 
+
+
 3. Monitoring Module ()
+
+
 Provides observability:
+
 • 	Log Analytics Workspace
+
 • 	Diagnostic settings (optional extension point)
+
 
 ENVIRONMENT STRUCTURE
 Each environment has its own folder under :
+
+
 Staging
 
 environments/staging/
+
+
     backend.tf
+
     main.tf
+
     variables.tf
+
     staging.tfvars
+
 
 Production
 
+
 environments/production/
+
     backend.tf
+
     main.tf
+
     variables.tf
+
     production.tfvars
 
+
 Each environment includes:
+
 - Its own remote backend configuration
 - Its own variable definitions
 - Its own .tfvars file
@@ -85,34 +119,64 @@ Secure password for VM admin user.
 SSH public key for Linux VM authentication.
 
 FILE STRUCTURE 
+
 .github/workflows/
+
     deploy.yml
 
+
 environments/
+
     staging/
+
         backend.tf
+
         main.tf
+
         variables.tf
+
         staging.tfvars
+
+
     production/
+
         backend.tf
+
         main.tf
+
         variables.tf
+
         production.tfvars
 
+
 modules/
+
     networking/
+
         main.tf
+
         variables.tf
-        outputs.tf
-    compute/
-        main.tf
-        variables.tf
-        outputs.tf
-    monitoring/
-        main.tf
-        variables.tf
+
         outputs.tf
 
+    compute/
+
+        main.tf
+
+        variables.tf
+
+        outputs.tf
+
+    monitoring/
+
+        main.tf
+
+        variables.tf
+
+        outputs.tf
+
+
 .gitignore
+
+
 README.md
