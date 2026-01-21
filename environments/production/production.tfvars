@@ -1,6 +1,6 @@
 location = "westus"
 rg_name  = "RG-Production"
-vnet_address_space = ["10.1.0.0/16]"]
+vnet_address_space = ["10.1.0.0/16"]
 frontend_subnet_prefix = ["10.1.1.0/24"]
 backend_subnet_prefix = ["10.1.2.0/24"]
 vm_size  = "Standard_B2s"
