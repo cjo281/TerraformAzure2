@@ -41,6 +41,6 @@ module "monitoring" {
   source   = "../../modules/monitoring"
   rg_name  = azurerm_resource_group.production.name
   location = var.location
-  target_resource_id = azurerm_resource_group.staging.id
-  log_analytics_workspace_name = var.log_analytics_workspace_n
+  target_resource_id = azurerm_resource_group.production.id
+  log_analytics_workspace_name = var.log_analytics_workspace_name
 }
